@@ -1,0 +1,20 @@
+[tools]
+go = "1.27.3"
+
+[tasks.build]
+description = "build pig in blanket container"
+run = "docker build -t pig-in-a-blanket -f Dockerfile ."
+
+[tasks.pig]
+description = "run pig with this directory as workspace"
+run = """
+docker run --rm -it \
+    -e PI_TELEMETRY=0 \
+    -e PI_SKIP_VERSION_CHECK=1 \
+    -e PLAN_MODE_ENABLED=true \
+    -v ./pig-home:/home/pig-user/.pig \
+    -v "$(pwd -P)":/workspace \
+    pig-in-a-blanket \
+        --model github-copilot/claude-sonnet-5.5 \
+        --thinking medium
+"""
